@@ -24,13 +24,19 @@ if ($null -eq (CheckIsActive)) {
     }
 }
 else {
-    Write-host "Script is running"
-    $processStartDate = CheckIsActive | % { $_.ConvertToDateTime( $_.CreationDate ) } | Get-Date
-    $processID = (CheckIsActive).ProcessID
+    "Script is running"
+    CheckIsActive | ForEach-Object {
+        $processStartDate = New-Object -Type PSCustomObject -Property @{
+          'Caption'      = $_.Caption
+          'CreationDate' = $_.ConvertToDateTime($_.CreationDate)
+        }
+    }
+    
     $nowDate = Get-Date
+    $minutes = (New-TimeSpan -Start $processStartDate.CreationDate -End $nowDate).TotalMinutes
 
-    if($((New-TimeSpan -Start $processStartDate -End $nowDate).TotalMinutes) -gt 30) {
-        Write-host "Spript is running more than 30 minutes, terminating..."
+    if($minutes -gt 30) {
+        "Spript is running more than 30 minutes, terminating..."
         Stop-Process -Id $processID -Force
         RunScript
     }
