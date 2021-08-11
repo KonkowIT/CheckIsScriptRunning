@@ -1,11 +1,11 @@
 $scriptName = "ScriptName"
 
 function CheckIsActive {
-    Get-WMIObject -Class Win32_Process -Filter "Name='PowerShell.EXE'" | ? { $_.commandline -like "*$scriptName.ps1" }
+    Get-WMIObject -Class Win32_Process -Filter "Name='PowerShell.EXE'" | ? { $_.commandline -like "*$scriptName.ps1*" }
 }
 
 function RunScript {
-    Start-process powershell.exe -ArgumentList "& '.\$scriptName.ps1'"
+    Start-process powershell.exe -ArgumentList "& '.\$scriptName.ps1'" -WindowStyle Minimized
     exit
 }
 
